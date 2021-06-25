@@ -84,15 +84,16 @@ USE EXAMPLE3
 --TAO BANG TRONG CO SO DU LIEU
 CREATE TABLE Contacts
 (MailId Varchar(20),
-Name NText,
+Name Text,
 Telephonenumber INT)
 
 --Them mot cot vao bang da co
 ALTER TABLE Contacts ADD Address nvarchar(50)
 
 --Them mot cot vao bang da co
-INSERT INTO Contacts values ('abc@gmail.com', N'Nguyen Van A',9877667, N'Ha Noi')
-
+INSERT INTO Contacts values ('abc@gmail.com', 'Nguyen Van A',9877667, 'Ha Noi')
+INSERT INTO Contacts values ('asc@gmail.com', 'Nguyen Van B',9877167, 'Ha Noi',2)
+INSERT INTO Contacts values ('aqc@gmail.com', 'Nguyen Van C',1877667, 'Ha Noi',3)
 --Lay ra tat ca ban ghi trong bang
 SELECT*FROM Contacts
 
@@ -127,3 +128,6 @@ SELECT SIGN(-42)--LA +1 NEU LA SO DUONG, -1 NEU LA SO AM, 0 NEU LA 0
 
 SELECT SQRT(9)--HAM CAN BAC HAI
 
+USE EXAMPLE3
+EXECUTE sp_changedbowner @loginame='sa'
+EXEC sp_changedbowner 'sa'
