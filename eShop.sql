@@ -14,8 +14,8 @@ CREATE TABLE Product
 (
 ProductID INT PRIMARY KEY IDENTITY(1,1),
 ProductName VARCHAR(30) NOT NULL,
-SupplierID INT IDENTITY(1,1) CONSTRAINT fk_supplierid FOREIGN KEY(SupplierID) REFERENCES Suppliers(SupplierID),
-CategoryID INT IDENTITY(1,1) CONSTRAINT fk_categoryid FOREIGN KEY(CategoryID) REFERENCES Categories(CategoryId),
+SupplierID INT,
+CategoryID INT CONSTRAINT fk_categoryid FOREIGN KEY(CategoryID) REFERENCES Categories(CategoryId),
 QuantityPerUntit VARCHAR(30) NULL,
 UnitPrice MONEY NULL DEFAULT(0) CONSTRAINT CK_Products_UnitPrice CHECK (UnitPrice >= 0),
 UnitsinStock INT NULL DEFAULT(0) CONSTRAINT CK_UnitsInStock CHECK (UnitsInStock >= 0),
@@ -93,11 +93,11 @@ CREATE TABLE Orders
 (
 OrderID INT PRIMARY KEY IDENTITY(1,1),
 CustomerID VARCHAR(5) DEFAULT NEWID() NOT NULL CONSTRAINT fk_customerid FOREIGN KEY(CustomerId) REFERENCES Customers(CustomerId),
-EmployeeID INT IDENTITY(1,1) CONSTRAINT fk_employeeid FOREIGN KEY(EmployeeId) REFERENCES Employees(EmployeeId),
+EmployeeID INT CONSTRAINT fk_employeeid FOREIGN KEY(EmployeeId) REFERENCES Employees(EmployeeId),
 OrderDate DATETIME NULL,
 RequiredDate DATETIME NULL,
 ShippedDate DATETIME NULL,
-ShipVia INT IDENTITY(1,1) CONSTRAINT fk_shipperid FOREIGN KEY(ShipVia) REFERENCES Shippers(ShipperID),
+ShipVia INT CONSTRAINT fk_shipperid FOREIGN KEY(ShipVia) REFERENCES Shippers(ShipperID),
 Freight MONEY NULL,
 ShipName VARCHAR(30) NULL,
 ShipAddress VARCHAR(30) NULL,
@@ -110,8 +110,8 @@ GO
 
 CREATE TABLE OrderDetails
 (
-OrderID INT IDENTITY(1,1) CONSTRAINT fk_orderid FOREIGN KEY(OrderID) REFERENCES Orders(OrderID),
-ProductID INT IDENTITY(1,1) CONSTRAINT fk_productid FOREIGN KEY(ProductID) REFERENCES Product(ProductID),
+OrderID INT CONSTRAINT fk_orderid FOREIGN KEY(OrderID) REFERENCES Orders(OrderID),
+ProductID INT CONSTRAINT fk_productid FOREIGN KEY(ProductID) REFERENCES Product(ProductID),
 UnitPrice MONEY NOT NULL DEFAULT (0) CONSTRAINT CK_UnitPrice CHECK (UnitPrice >= 0),
 Quantity INT NOT NULL DEFAULT (1) CONSTRAINT CK_Quantity CHECK (Quantity > 0),
 Discount REAL NOT NULL DEFAULT (0) CONSTRAINT CK_Discount CHECK (Discount >= 0 and (Discount <= 1)),
@@ -121,3 +121,6 @@ CONSTRAINT "PK_Order_Details" PRIMARY KEY
 		"ProductID"
 	)
 )
+GO
+
+ALTER TABLE Product ADD CONSTRAINT fk_supplierid FOREIGN KEY(SupplierID) REFERENCES Suppliers(SupplierID)
