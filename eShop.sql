@@ -1,0 +1,123 @@
+CREATE DATABASE eShop
+USE eShop
+GO
+
+CREATE TABLE Categories
+(
+CategoryID INT PRIMARY KEY IDENTITY(1,1),
+CategoryName VARCHAR(30) NOT NULL,
+Description TEXT NULL
+)
+GO
+
+CREATE TABLE Product
+(
+ProductID INT PRIMARY KEY IDENTITY(1,1),
+ProductName VARCHAR(30) NOT NULL,
+SupplierID INT IDENTITY(1,1) CONSTRAINT fk_supplierid FOREIGN KEY(SupplierID) REFERENCES Suppliers(SupplierID),
+CategoryID INT IDENTITY(1,1) CONSTRAINT fk_categoryid FOREIGN KEY(CategoryID) REFERENCES Categories(CategoryId),
+QuantityPerUntit VARCHAR(30) NULL,
+UnitPrice MONEY NULL DEFAULT(0) CONSTRAINT CK_Products_UnitPrice CHECK (UnitPrice >= 0),
+UnitsinStock INT NULL DEFAULT(0) CONSTRAINT CK_UnitsInStock CHECK (UnitsInStock >= 0),
+UnitsOnOrder INT NULL DEFAULT(0) CONSTRAINT CK_UnitsOnOrder CHECK (UnitsOnOrder >= 0),
+ReorderLevel INT NULL DEFAULT(0) CONSTRAINT CK_ReorderLevel CHECK (ReorderLevel >= 0),
+Discontinued BIT NULL DEFAULT(0)
+)
+GO
+
+CREATE TABLE Customers
+(
+CustomerID VARCHAR(5) PRIMARY KEY DEFAULT NEWID() NOT NULL,
+CompanyName VARCHAR(30) NOT NULL,
+ContactName VARCHAR(30) NULL,
+ContactTitle VARCHAR(30) NULL,
+Address VARCHAR(30) NULL,
+City VARCHAR(30) NULL,
+Region TEXT NULL,
+PostalCocde VARCHAR(30) NULL,
+Country VARCHAR(30) NULL,
+Phone BIGINT NULL,
+Fax BIGINT NULL,
+Image IMAGE NUll,
+ImageThumbnall IMAGE NULL
+)
+GO
+
+CREATE TABLE Employees
+(
+EmployeeID INT PRIMARY KEY IDENTITY(1,1),
+LastNamme VARCHAR(30)NOT NULL,
+FirstName VARCHAR(30) NOT NULL,
+Title VARCHAR(30) NULL,
+TitleOfCourtesy VARCHAR(30) NULL,
+BirthDate DATETIME NULL CONSTRAINT ck_birthdate CHECK (BirthDate < getdate()),
+HireDate DATETIME NULL,
+Address VARCHAR(30) NULL,
+City VARCHAR(30) NULL,
+Region VARCHAR(30) NULL,
+PostalCode VARCHAR(30) NULL,
+Country VARCHAR(30)NULL,
+HomePhone BIGINT NULL,
+Extension INT NULL,
+Notes TEXT NULL,
+ReportsTo INT NULL CONSTRAINT fk_reportsto FOREIGN KEY(ReportsTo) REFERENCES Employees(EmployeeID)
+)
+GO
+
+CREATE TABLE Shippers
+(
+ShipperID INT PRIMARY KEY IDENTITY(1,1),
+CompanyName VARCHAR(30) NOT NULL,
+Phone BIGINT NULL
+)
+GO
+
+CREATE TABLE Suppliers
+(
+SupplierID INT PRIMARY KEY IDENTITY(1,1),
+CompanyName VARCHAR(30) NOT NULL,
+ContactName VARCHAR(30) NULL,
+ContacTitle VARCHAR(30) NULL,
+Address VARCHAR(30) NULL,
+City VARCHAR(30) NULL,
+Region VARCHAR(30) NULL,
+PostalCode VARCHAR(30) NULL,
+Country VARCHAR(30) NULL,
+Phone BIGINT NULL,
+Fax BIGINT NULL,
+HomePage TEXT NULL,
+)
+GO
+
+CREATE TABLE Orders
+(
+OrderID INT PRIMARY KEY IDENTITY(1,1),
+CustomerID VARCHAR(5) DEFAULT NEWID() NOT NULL CONSTRAINT fk_customerid FOREIGN KEY(CustomerId) REFERENCES Customers(CustomerId),
+EmployeeID INT IDENTITY(1,1) CONSTRAINT fk_employeeid FOREIGN KEY(EmployeeId) REFERENCES Employees(EmployeeId),
+OrderDate DATETIME NULL,
+RequiredDate DATETIME NULL,
+ShippedDate DATETIME NULL,
+ShipVia INT IDENTITY(1,1) CONSTRAINT fk_shipperid FOREIGN KEY(ShipVia) REFERENCES Shippers(ShipperID),
+Freight MONEY NULL,
+ShipName VARCHAR(30) NULL,
+ShipAddress VARCHAR(30) NULL,
+ShipCity VARCHAR(30) NULL,
+ShipRegion VARCHAR(30) NULL,
+ShipPostalCode VARCHAR(30) NULL,
+ShipCountry VARCHAR(30) NULL,
+)
+GO
+
+CREATE TABLE OrderDetails
+(
+OrderID INT IDENTITY(1,1) CONSTRAINT fk_orderid FOREIGN KEY(OrderID) REFERENCES Orders(OrderID),
+ProductID INT IDENTITY(1,1) CONSTRAINT fk_productid FOREIGN KEY(ProductID) REFERENCES Product(ProductID),
+UnitPrice MONEY NOT NULL DEFAULT (0) CONSTRAINT CK_UnitPrice CHECK (UnitPrice >= 0),
+Quantity INT NOT NULL DEFAULT (1) CONSTRAINT CK_Quantity CHECK (Quantity > 0),
+Discount REAL NOT NULL DEFAULT (0) CONSTRAINT CK_Discount CHECK (Discount >= 0 and (Discount <= 1)),
+CONSTRAINT "PK_Order_Details" PRIMARY KEY 
+	(
+		"OrderID",
+		"ProductID"
+	)
+)
