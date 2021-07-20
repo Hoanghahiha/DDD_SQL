@@ -213,10 +213,10 @@ GO
 --2. Tạo một khung nhìn chứa danh sách các sinh viên đã có ít nhất 2 bài thi (2 môn học khác nhau).
 CREATE VIEW Studenttwosubject
 AS
-SELECT FullName, Male, Birthdate, Address, Email, SubjectCode FROM Student A
-JOIN Mark B
-ON A.RollNo = B.RollNo
-WHERE COUNT(B.SubjectCode) > 1
+SELECT a.RollNo FROM Student a 
+LEFT JOIN Mark b ON a.RollNo = b.RollNo 
+GROUP BY a.RollNo 
+HAVING COUNT( b.SubjectCode)>=2 
 
 --3. Tạo một khung nhìn chứa danh sách tất cả các sinh viên đã bị trượt ít nhất là một môn.
 CREATE VIEW Studentdropsubject
@@ -237,20 +237,5 @@ WHERE TimeSlot = 'M'
 SELECT * FROM Studenttimesubject
 
 --5. Tạo một khung nhìn chứa danh sách các giáo viên có ít nhất 3 học sinh thi trượt ở bất cứ môn nào
-CREATE VIEW TeacherdropStudent
-AS
-SELECT A.ClassCode, HeadTeacher FROM Class A
-JOIN Student C
-ON C.ClassCode = A.ClassCode
-JOIN Mark B
-ON B.RollNo = C.RollNo
-WHERE WMark < 6.0 OR PMark < 6.0
-SELECT * FROM TeacherdropStudent
+
 --6. Tạo một khung nhìn chứa danh sách các sinh viên thi trượt môn EPC của từng lớp. Khung nhìn này phải chứa các cột: Tên sinh viên, Tên lớp, Tên Giáo viên, Điểm thi môn EPC.
-CREATE VIEW StudentsdropSubCode
-AS
-SELECT FullName, A.ClassCode, HeadTeacher, WMark, PMark, Mark FROM Student A
-JOIN Class B ON B.ClassCode = A.ClassCode
-JOIN Mark C ON C.RollNo = A.RollNo
-WHERE WMark < 6.0 OR PMark < 6.0
-SELECT * FROM StudentsdropSubCode
