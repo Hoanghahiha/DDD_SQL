@@ -237,5 +237,26 @@ WHERE TimeSlot = 'M'
 SELECT * FROM Studenttimesubject
 
 --5. Tạo một khung nhìn chứa danh sách các giáo viên có ít nhất 3 học sinh thi trượt ở bất cứ môn nào
+CREATE VIEW HStruot_cuagv
+AS
+select HeadTeacher
+from Class
+where  ClassCode IN 
+			(	select ClassCode  
+				from student a left join 
+				(	 select RollNo , SubjectCode
+					 from Mark 
+					 where Mark <= 8 ) b on a.RollNo = b.RollNo 
 
---6. Tạo một khung nhìn chứa danh sách các sinh viên thi trượt môn EPC của từng lớp. Khung nhìn này phải chứa các cột: Tên sinh viên, Tên lớp, Tên Giáo viên, Điểm thi môn EPC.
+				group by ClassCode
+				having count(ClassCode  ) >=3
+			)
+ SELECT * FROM HStruot_cuagv
+--6. Tạo một khung nhìn chứa danh sách các sinh viên thi trượt môn D0001 của từng lớp. Khung nhìn này phải chứa các cột: Tên sinh viên, Tên lớp, Tên Giáo viên, Điểm thi môn D0001.
+CREATE VIEW V_SVTRUOTD001
+AS
+SELECT FullName, A.ClassCode, HeadTeacher, WMark, PMark,Mark FROM Student A
+JOIN Class B ON B.ClassCode = A.ClassCode
+JOIN Mark C ON C.RollNo = A.RollNo
+WHERE WMark < 6.0 OR PMark < 6.0
+SELECT * FROM V_SVTRUOTD001
